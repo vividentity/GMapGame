@@ -72,6 +72,7 @@
 var geocoder;
 var person;
 var location;
+var hordes;
 var map;
 var markersArray = [];
 var bounds;
@@ -86,34 +87,34 @@ function initialize() {
     bounds = new google.maps.LatLngBounds ();
 
     var myOptions = {
-        zoom: 2, 
-		minZoom: 3,
-		maxZoom: 22,
+        zoom: 18, 
+		minZoom: 18,
+		maxZoom: 18,
         mapTypeId: google.maps.MapTypeId.SATELLITE,
 		disableDefaultUI: true
     };
 	
     map = new google.maps.Map(document.getElementById("gmaps-container"), myOptions);
 
-    geocoder.geocode( { 'address': 'NR31 8SX'}, function(results, status) {
+    geocoder.geocode( { 'address': '53, el alamein way, bradwell, NR31 8SX'}, function(results, status) {
 		
         if (status == google.maps.GeocoderStatus.OK) {
 			
-			person = new google.maps.MarkerImage('map.png',
-				// size of marker
-				new google.maps.Size(16, 32),
-				// store location is at pin
-				new google.maps.Point(0, 0),
-				// info window anchor
-				new google.maps.Point(0, 0)
-			);
+//			person = new google.maps.MarkerImage('map.png',
+//				// size of marker
+//				new google.maps.Size(16, 32),
+//				// store location is at pin
+//				new google.maps.Point(0, 0),
+//				// info window anchor
+//				new google.maps.Point(0, 0)
+//			);
 			
             map.setCenter(results[0].geometry.location);
 
 			marker = new google.maps.Marker({
 				position: results[0].geometry.location,
 				map: map,
-				icon: person
+				icon: 'person.png'
 			 });
 
             bounds.extend(results[0].geometry.location);
@@ -127,11 +128,19 @@ function initialize() {
     });
 
     plotMarkers();
+	
+	plotHords();
 }
 
 var locationsArray = [
 		['Playing Fields', 'The Playing Fields, Mill Lane, Great Yarmouth NR31 8HS'],
 		['Bradwell Fuel Station', 'Blackbird Close, Great Yarmouth, Norfolk NR31 8RU']
+	];
+var hordeArray = [
+		['Small Horde', '54 Blackbird Close, Bradwell, Great Yarmouth, Norfolk NR31 8RU, UK'],
+		['Large Horde', 'Blackbird Close, Bradwell, Great Yarmouth, Norfolk NR31 8RT, UK'],
+		['Small Horde', '141 El Alamein Way, Bradwell, Great Yarmouth, Norfolk NR31 8SX, UK'],
+		['Large Horde', '3 El Alamein Way, Bradwell, Great Yarmouth, Norfolk NR31 8SX, UK']
 	];
 
 function plotMarkers(){
@@ -140,21 +149,49 @@ function plotMarkers(){
         codeAddresses(locationsArray[i]);
     }
 }
+function plotHords(){
+    var i;
+    for(i = 0; i < hordeArray.length; i++){
+        codeHordeMovment(hordeArray[i]);
+    }
+}
 
 function codeAddresses(address){
 	
     geocoder.geocode( { 'address': address[1]}, function(results, status) { 
         if (status == google.maps.GeocoderStatus.OK) {
 			
-//			location = new google.maps.MarkerImage('location.png',
-//				new google.maps.Size(50, 50),
-//				new google.maps.Point(0, 0),
-//				new google.maps.Point(0, 0)
-//			);
+            marker = new google.maps.Marker({
+                map: map,
+				icon: 'location.png',
+                position: results[0].geometry.location
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent(address[0]);
+                infowindow.open(map, this);
+            });
+
+            bounds.extend(results[0].geometry.location);
+
+            markersArray.push(marker); 
+        }
+        else{
+            alert("Geocode was not successful for the following reason: " + status);
+        }
+
+        map.fitBounds(bounds);
+    });
+}
+
+function codeHordeMovment(address){
+	
+    geocoder.geocode( { 'address': address[1]}, function(results, status) { 
+        if (status == google.maps.GeocoderStatus.OK) {
 			
             marker = new google.maps.Marker({
                 map: map,
-//				icon: location,
+				icon: 'horde.png',
                 position: results[0].geometry.location
             });
 
