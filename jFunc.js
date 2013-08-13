@@ -283,10 +283,11 @@ f1.points.value = 1;
 }
 
 function clearRandomPoint () {
-f1.randompoint.value= "";
-gLatlon="";
-document.getElementById("randompoint").rows = 2;
-document.getElementById("randompointlabel").innerHTML = "Results:";
+	
+	f1.randompoint.value= "";
+	gLatlon="";
+	document.getElementById("randompoint").rows = 2;
+	document.getElementById("randompointlabel").innerHTML = "Results:";
 }
 
 function resetValues() {
