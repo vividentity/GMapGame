@@ -1,4 +1,19 @@
 <?php
+//$longitude = (float) 52.5842397;
+//$latitude = (float) 1.6965649;
+//$radius = 0.1; // in miles
+//
+//$lng_min = $longitude - $radius / abs( cos( deg2rad( $latitude ) ) * 69);
+//$lng_max = $longitude + $radius / abs( cos( deg2rad( $latitude ) ) * 69);
+//$lat_min = $latitude - ($radius / 69);
+//$lat_max = $latitude + ($radius / 69);
+//
+//$rand = rand(0,10);
+
+
+//echo 'lng (min/max): ' . $lng_min . '/' . $lng_max . PHP_EOL;
+//echo 'lat (min/max): ' . $lat_min . '/' . $lat_max;
+
 	Class gmap_coordinates{
 	
 		public $wpdb;
