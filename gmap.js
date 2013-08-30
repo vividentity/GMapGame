@@ -19,9 +19,19 @@ var wait = 0;
 var myPano;   
 var panoClient;
 var nextPanoId;
- var timerHandle = null;
-
+var timerHandle = null;
+var steps = []
 var bounds;
+
+var autoLocations = [
+	'lodging',
+	'park',
+	'parking',
+	'doctor',
+	'gas_station',
+	'police',
+	'food'
+];
        
 var infowindow =  new google.maps.InfoWindow({
     content: ''
@@ -35,9 +45,17 @@ function initialize() {
 	
 	// Instantiate a directions service.
 	directionsService = new google.maps.DirectionsService();
-
+	
+	// Set Lat Long via Database Vaules
+	var Latitude = 52.584240;
+	var Longitude = 1.696565;
+	var address = '53, el alamein way, bradwell, NR31 8SX';
+	
+	var myLatlng = new google.maps.LatLng(Latitude, Longitude);
+	
     var myOptions = {
         zoom: 18, 
+		center: myLatlng,
 		minZoom: 18,
 		maxZoom: 18,
         mapTypeId: google.maps.MapTypeId.SATELLITE,
@@ -47,7 +65,8 @@ function initialize() {
 	
     map = new google.maps.Map(document.getElementById("gmaps-container"), myOptions);
 
-    geocoder.geocode( { 'address': '53, el alamein way, bradwell, NR31 8SX'}, function(results, status) {
+//    geocoder.geocode( {'latLng': myLatlng}, function(results, status) {
+    geocoder.geocode( { 'address': address }, function(results, status) {
 		
         if (status == google.maps.GeocoderStatus.OK) {
 			
@@ -62,14 +81,21 @@ function initialize() {
 			
             map.setCenter(results[0].geometry.location);
 			
+			var PlayerLocation = results[0].geometry.location;
+			
 			//Player Icon
 			playermarker = new google.maps.Marker({
-				position: results[0].geometry.location,
+				position: PlayerLocation,
 				map: map,
 				icon: 'person.png' // Temp for development
-			 });
+			});
+			 
+			// Place Auto Markers
+			for (var i = 0; i < autoLocations.length; i++) {
+				plotAutoMarkers( PlayerLocation, autoLocations[i] );
+			}
 
-            bounds.extend(results[0].geometry.location);
+            bounds.extend( PlayerLocation );
 
             markersArray.push( playermarker );
 			
@@ -125,13 +151,53 @@ function initialize() {
         }
 		
     });
-
+	
+	// Plot Set locations
     plotMarkers();
 	
+	// Place Hordes on map
 	plotHords();
+
 }
 
-var steps = []
+function plotAutoMarkers( myLatlng, locType ){
+	var request = {
+		location: myLatlng,
+		radius: 500,
+		types:[locType]
+	};
+
+	var service = new google.maps.places.PlacesService(map);
+	service.nearbySearch(request, callback);
+}
+
+var infowindow = new google.maps.InfoWindow();
+
+function callback(results, status) {
+	if (status == google.maps.places.PlacesServiceStatus.OK) {
+		for (var i = 0; i < results.length; i++) {
+			createMarker(results[i],autoLocations[i]);
+		}
+	}
+}
+
+function createMarker( place, locType ) {
+
+	var placeLoc = place.geometry.location;
+
+	var markers = new google.maps.Marker({
+		map: map,
+		position: placeLoc,
+		icon: locType + '.png'
+	});
+
+	google.maps.event.addListener(markers, 'click', function() {
+		infowindow.setContent(place.name);
+		infowindow.open(map, this);
+	});
+}
+
+
 
 function calcRoute(){
 
@@ -291,7 +357,7 @@ function startAnimation() {
 
 
 var locationsArray = [
-		['Playing Fields', 'The Playing Fields, Mill Lane, Great Yarmouth NR31 8HS', 'location-23'],
+//		['Playing Fields', 'The Playing Fields, Mill Lane, Great Yarmouth NR31 8HS', 'location-23'],
 		['Bradwell Fuel Station', 'Blackbird Close, Great Yarmouth, Norfolk NR31 8RU', 'location-34']
 	];
 var hordeArray = [
