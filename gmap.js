@@ -66,7 +66,7 @@ function initialize() {
     map = new google.maps.Map(document.getElementById("gmaps-container"), myOptions);
 
 //    geocoder.geocode( {'latLng': myLatlng}, function(results, status) {
-    geocoder.geocode( { 'address': address }, function(results, status) {
+    geocoder.geocode( { 'address': address }, function(results, status) { // Preferably needs to be LAT / LONG not Address
 		
         if (status == google.maps.GeocoderStatus.OK) {
 			
@@ -119,7 +119,14 @@ function initialize() {
 				openAction();
 				
 				// Create a renderer for directions and bind it to the map.
-				directionsDisplay = new google.maps.DirectionsRenderer({map: map});
+				var DirectionsRendererOptions = {
+					map: map,
+					PolylineOptions: {
+						visible: false
+					}
+				};
+				directionsDisplay = new google.maps.DirectionsRenderer( DirectionsRendererOptions );
+				//PolylineOptions = new google.maps.PolylineOptions( {strokeOpacity: 0.0} );
 
 				polyline = new google.maps.Polyline({
 					path: [],
@@ -128,23 +135,11 @@ function initialize() {
 				});
 				poly2 = new google.maps.Polyline({
 					path: [],
-					//strokeColor: '#FF0000',
-					//strokeWeight: 3
-				});
 
-				//playermarker.setPosition( goto );
+				});
+				
 			});
-			
-			/*
-			// Add circle overlay and bind to marker
-			var circle = new google.maps.Circle({
-			  map: map,
-			  radius: 100,    //in metres
-			  fillColor: '#AA0000'
-			});
-			*/
-		   
-			//circle.bindTo('center', playermarker, 'position');
+
         }
         else{
             alert("Geocode was not successful for the following reason: " + status);
@@ -159,6 +154,65 @@ function initialize() {
 	plotHords();
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+function calculateDistances() {
+  var service = new google.maps.DistanceMatrixService();
+  var start = document.getElementById("start").value;
+  var end = document.getElementById("end").value;
+  console.log( start );
+  console.log( end );
+  service.getDistanceMatrix(
+    {
+      origins: [start],
+      destinations: [end],
+      travelMode: google.maps.TravelMode.BICYCLING,
+      unitSystem: google.maps.UnitSystem.IMPERIAL,
+      avoidHighways: false,
+      avoidTolls: false
+    }, callback);
+}
+
+function callback(response, status) {
+	
+	console.log( response );
+	
+  if (status != google.maps.DistanceMatrixStatus.OK) {
+    alert('Error was: ' + status);
+  } else {
+
+    var origins = response.originAddresses;
+    var destinations = response.destinationAddresses;
+//    var outputDiv = document.getElementById('outputDiv');
+	
+//    outputDiv.innerHTML = '';
+
+    for (var i = 0; i < origins.length; i++) {
+		
+      var results = response.rows[i].elements;
+
+//      addMarker(origins[i], false);
+      for (var j = 0; j < results.length; j++) {
+
+//        addMarker(destinations[j], true);
+        outputDiv.innerHTML += origins[i] + ' to ' + destinations[j]
+            + ': ' + results[j].distance.text + ' in '
+            + results[j].duration.text + '<br>';
+	
+		console.log( 'hello' );
+	
+      }
+	  
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 function plotAutoMarkers( myLatlng, locType ){
 	var request = {
@@ -197,9 +251,9 @@ function createMarker( place, locType ) {
 	});
 }
 
-
-
 function calcRoute(){
+	
+	calculateDistances();
 
 	if (timerHandle) { clearTimeout(timerHandle); }
 	
@@ -230,7 +284,7 @@ function calcRoute(){
 
 	var start = document.getElementById("start").value;
 	var end = document.getElementById("end").value;
-	var travelMode = google.maps.DirectionsTravelMode.WALKING;
+	var travelMode = google.maps.DirectionsTravelMode.BICYCLING;
 
 	var request = {
 		origin: start,
@@ -244,7 +298,7 @@ function calcRoute(){
 	  if (status == google.maps.DirectionsStatus.OK){
 		  
 		directionsDisplay.setDirections(response);
-		console.log(response);
+//		console.log(response);
 			  var bounds = new google.maps.LatLngBounds();
 			  var route = response.routes[0];
 			  startLocation = new Object();
