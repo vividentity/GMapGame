@@ -4,6 +4,7 @@ GMapGame
 
 To Do List
 ========
+== CODEING JAVASCRIPT ==
 - Randomly place hordes around location markers depending on risk level (1,2,3,4)
 - Make horde markers move along roadways and paths (Animation).
 - Hordes and person markers collision detection.
@@ -12,5 +13,9 @@ To Do List
 		* Now Animates on click.
 	- Need path to be hidden.
 	- Needs to follow pathways as well as road (If Possible).
-- Game GUI needs styling as per GUI design by Ryan
+
+== CODEING PHP ==
 - XP, Distance and Collectables mathamatics in PHP
+
+== GRAPHICS AND STYLING ==
+- Game GUI needs styling as per GUI design by Ryan
