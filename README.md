@@ -17,5 +17,9 @@ To Do List
 == CODEING PHP ==
 - XP, Distance and Collectables mathamatics in PHP
 
-== GRAPHICS AND STYLING ==
+== GRAPHICS, STYLING AND SOUND==
 - Game GUI needs styling as per GUI design by Ryan
+- Record sound effects and radio calls
+	* Police, Army Anouncements
+	* Help Requests
+

@@ -113,17 +113,17 @@ function initialize() {
 				 * goto.jb
 				 * goto.kb
 				 */
-				document.getElementById('start').value = pos.jb + ' ' + pos.kb;
-				document.getElementById('end').value = goto.jb + ' ' + goto.kb;
+				document.getElementById('start').value = pos.jb + ', ' + pos.kb;
+				document.getElementById('end').value = goto.jb + ', ' + goto.kb;
 				
-				openAction();
+				//openAction();
 				
 				// Create a renderer for directions and bind it to the map.
 				var DirectionsRendererOptions = {
 					map: map,
-					PolylineOptions: {
-						visible: false
-					}
+//					PolylineOptions: {
+//						visible: false
+//					}
 				};
 				directionsDisplay = new google.maps.DirectionsRenderer( DirectionsRendererOptions );
 				//PolylineOptions = new google.maps.PolylineOptions( {strokeOpacity: 0.0} );
@@ -163,21 +163,26 @@ function calculateDistances() {
   var service = new google.maps.DistanceMatrixService();
   var start = document.getElementById("start").value;
   var end = document.getElementById("end").value;
-  console.log( start );
-  console.log( end );
+  var origin = new google.maps.LatLng(start);
+  var destination = new google.maps.LatLng(end);
+  
+//  console.log( origin );
+//  console.log( destination );
+  
   service.getDistanceMatrix(
     {
-      origins: [start],
-      destinations: [end],
+      origins: [origin],
+      destinations: [destination],
       travelMode: google.maps.TravelMode.BICYCLING,
       unitSystem: google.maps.UnitSystem.IMPERIAL,
       avoidHighways: false,
       avoidTolls: false
     }, callback);
 }
-
+// The calculate
 function callback(response, status) {
 	
+	console.log( 'hello' );
 	console.log( response );
 	
   if (status != google.maps.DistanceMatrixStatus.OK) {
@@ -515,13 +520,17 @@ google.maps.event.addDomListener(window, 'load', initialize);
 	$('#dialog-box').fadeIn().html( theid );
 
   }
-  function openAction( ){
-	$('#action-box').fadeIn();
+  function openAction( e ){
+	  
+	//$('#action-box').fadeIn();
+	$('#action-box').fadeIn().css(({ left:  e.pageX, top: e.pageY }));
 	
   }
   
   
   $(document).ready(function(){
+	  
+	  $('#gmaps-container').click( openAction );
 	  
 	$('.move').click(function(){
 		//move to selected location
