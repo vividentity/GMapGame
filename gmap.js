@@ -13,15 +13,17 @@ var position;
 var marker = null;
 var polyline = null;
 var poly2 = null;
-var speed = 0.000005
+var speed = 0.000005;
 var wait = 0;
 
 var myPano;   
 var panoClient;
 var nextPanoId;
 var timerHandle = null;
-var steps = []
+var steps = [];
 var bounds;
+
+var playermarker;
 
 var autoLocations = [
 	'lodging',
@@ -310,6 +312,12 @@ function calcRoute(){
 			  endLocation = new Object();
 
 		  // For each route, display summary information.
+		  //console.log(response.routes[0].overview_path);
+
+		  haversineDistance(response.routes[0].overview_path)
+
+
+
 		  var path = response.routes[0].overview_path;
 		  var legs = response.routes[0].legs;
 
@@ -436,6 +444,7 @@ function plotMarkers(){
         codeAddresses(locationsArray[i]);
     }
 }
+
 function plotHords(){
     var i;
     for(i = 0; i < hordeArray.length; i++){
@@ -511,26 +520,74 @@ function codeHordeMovment(address){
 google.maps.event.addDomListener(window, 'load', initialize);
 
 
-  //]]>
-  function openScreen( theid ){
-  
-//	alert( 'Open Dialog and information box for ID: ' + theid );
-//	console.log( theid );
-	
-	$('#dialog-box').fadeIn().html( theid );
+function openScreen( theid ){
+	//	alert( 'Open Dialog and information box for ID: ' + theid );
+	//	console.log( theid );
 
-  }
-  function openAction( e ){
-	  
+	$('#dialog-box').fadeIn().html( theid );
+}
+
+function openAction( e ){	  
 	//$('#action-box').fadeIn();
 	$('#action-box').fadeIn().css(({ left:  e.pageX, top: e.pageY }));
+}
+
+
+function haversineDistance(coordinates) {
+	var x, lat, lng, lastLat, lastLng;
+
+	lastLat = playermarker.position.jb;
+	lastLng = playermarker.position.kb;
 	
+	console.log(lastLat + " - " + lastLng);
+
+	var distance = 0;
+
+	for(x in coordinates) {
+		xlat = coordinates[x].jb;
+		xlng = coordinates[x].kb;
+
+		var R = 3959; // miles (6371 for km)
+		var dLat = (lastLat-xlat).toRad();
+		var dLon = (lastLng-xlng).toRad();
+		var xLatRads = xlat.toRad();
+		var xLastLatRads = lastLat.toRad();
+
+		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+			Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(xLatRads) * Math.cos(xLastLatRads); 
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		var d = R * c;
+
+		lastLat = xlat;
+		lastLng = xlng;
+
+		distance += d;
+	}
+
+	console.log("distance: " + distance);
+
+	/*var R = 6371; // km
+	var dLat = (lat2-lat1).toRad();
+	var dLon = (lon2-lon1).toRad();
+	var lat1 = lat1.toRad();
+	var lat2 = lat2.toRad();
+
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c;*/
+}
+
+/** Converts numeric degrees to radians */
+if (typeof(Number.prototype.toRad) === "undefined") {
+  Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
   }
+}
   
-  
-  $(document).ready(function(){
+$(document).ready(function(){
 	  
-	  $('#gmaps-container').click( openAction );
+	$('#gmaps-container').click( openAction );
 	  
 	$('.move').click(function(){
 		//move to selected location
@@ -548,5 +605,4 @@ google.maps.event.addDomListener(window, 'load', initialize);
 		//close box do nothing
 		$('#action-box').fadeOut();
 	});
-	
 });
