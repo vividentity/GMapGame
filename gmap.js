@@ -101,10 +101,46 @@ function initialize() {
 
             markersArray.push( playermarker );
 			
-			google.maps.event.addListener(map, 'click', find_closest_marker);
-			
 			// Clicking on the map for movement and 
-			//google.maps.event.addListener(map, 'click', select_movement);
+			google.maps.event.addListener(map, 'click', function(event) {
+				
+				var pos = playermarker.getPosition();
+				var goto = event.latLng;
+				/*
+				 * -- Position --
+				 * pos.jb
+				 * pos.kb
+				 * 
+				 * -- Goto --
+				 * goto.jb
+				 * goto.kb
+				 */
+				document.getElementById('start').value = pos.jb + ', ' + pos.kb;
+				document.getElementById('end').value = goto.jb + ', ' + goto.kb;
+				
+				//openAction();
+				
+				// Create a renderer for directions and bind it to the map.
+				var DirectionsRendererOptions = {
+					map: map,
+//					PolylineOptions: {
+//						visible: false
+//					}
+				};
+				directionsDisplay = new google.maps.DirectionsRenderer( DirectionsRendererOptions );
+				//PolylineOptions = new google.maps.PolylineOptions( {strokeOpacity: 0.0} );
+
+				polyline = new google.maps.Polyline({
+					path: [],
+					//strokeColor: '#FF0000',
+					//strokeWeight: 3
+				});
+				poly2 = new google.maps.Polyline({
+					path: [],
+
+				});
+				
+			});
 
         }
         else{
@@ -125,106 +161,27 @@ function initialize() {
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-function rad(x) {
-	return x*Math.PI/180;
-}
-
-function find_closest_marker( event ) {
-	
-    var lat = event.latLng.lat();
-    var lng = event.latLng.lng();
-    var R = 6371; // radius of earth in km
-    var distances = [];
-    var closest = -1;
-    for( i=0;i<map.markers.length; i++ ) {
-        var mlat = map.markers[i].position.lat();
-        var mlng = map.markers[i].position.lng();
-        var dLat  = rad(mlat - lat);
-        var dLong = rad(mlng - lng);
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = R * c;
-        distances[i] = d;
-        if ( closest == -1 || d < distances[closest] ) {
-            closest = i;
-        }
-    }
-
-    console.log(map.markers[closest].title);
-}
-
-function select_movement( event ){	
-	
-	var pos = playermarker.getPosition();
-	var goto = event.latLng;
-	/*
-	 * -- Position --
-	 * pos.jb
-	 * pos.kb
-	 * 
-	 * -- Goto --
-	 * goto.jb
-	 * goto.kb
-	 */
-	document.getElementById('start').value = pos.jb + ', ' + pos.kb;
-	document.getElementById('end').value = goto.jb + ', ' + goto.kb;
-
-	openAction();
-
-	// Create a renderer for directions and bind it to the map.
-	var DirectionsRendererOptions = {
-		map: map,
-//					PolylineOptions: {
-//						visible: false
-//					}
-	};
-	directionsDisplay = new google.maps.DirectionsRenderer( DirectionsRendererOptions );
-	//PolylineOptions = new google.maps.PolylineOptions( {strokeOpacity: 0.0} );
-
-	polyline = new google.maps.Polyline({
-		path: [],
-		//strokeColor: '#FF0000',
-		//strokeWeight: 3
-	});
-	poly2 = new google.maps.Polyline({
-		path: [],
-
-	});		
-}
-
-/**@function calculateDistances()
- * @example Calculates the distance from current location to new selected location
- * @returns {undefined}
- * @version This current version is not working, needs investigation
- * @requires callback()
- */
 function calculateDistances() {
-	
-  var service		= new google.maps.DistanceMatrixService();
-  var start			= document.getElementById("start").value;
-  var end			= document.getElementById("end").value;
-  var origin		= new google.maps.LatLng(start);
-  var destination	= new google.maps.LatLng(end);
+  var service = new google.maps.DistanceMatrixService();
+  var start = document.getElementById("start").value;
+  var end = document.getElementById("end").value;
+  var origin = new google.maps.LatLng(start);
+  var destination = new google.maps.LatLng(end);
+  
+//  console.log( origin );
+//  console.log( destination );
   
   service.getDistanceMatrix(
     {
-      origins:			[origin],
-      destinations:		[destination],
-      travelMode:		google.maps.TravelMode.BICYCLING,
-      unitSystem:		google.maps.UnitSystem.IMPERIAL,
-      avoidHighways:	false,
-      avoidTolls:		false
+      origins: [origin],
+      destinations: [destination],
+      travelMode: google.maps.TravelMode.BICYCLING,
+      unitSystem: google.maps.UnitSystem.IMPERIAL,
+      avoidHighways: false,
+      avoidTolls: false
     }, callback);
 }
-
-/**
- * @function callback(response, status)
- * @param {type} results
- * @param {type} status
- * @returns {undefined}
- * @requires calculateDistances()
- */
+// The calculate
 function callback(response, status) {
 	
 	console.log( 'hello' );
@@ -264,12 +221,6 @@ function callback(response, status) {
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * @function plotAutoMarkers( myLatlng, locType )
- * @param {type} myLatlng
- * @param {type} locType
- * @returns {undefined}
- */
 function plotAutoMarkers( myLatlng, locType ){
 	var request = {
 		location: myLatlng,
@@ -278,12 +229,12 @@ function plotAutoMarkers( myLatlng, locType ){
 	};
 
 	var service = new google.maps.places.PlacesService(map);
-	service.nearbySearch(request, plotcallback);
+	service.nearbySearch(request, callback);
 }
 
 var infowindow = new google.maps.InfoWindow();
 
-function plotcallback(results, status) {
+function callback(results, status) {
 	if (status == google.maps.places.PlacesServiceStatus.OK) {
 		for (var i = 0; i < results.length; i++) {
 			createMarker(results[i],autoLocations[i]);
