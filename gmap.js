@@ -24,6 +24,7 @@ var steps = [];
 var bounds;
 
 var playermarker;
+var playerIcon = 'assets/images/icons/player.png';
 
 var autoLocations = [
 	'lodging',
@@ -89,7 +90,7 @@ function initialize() {
 			playermarker = new google.maps.Marker({
 				position: PlayerLocation,
 				map: map,
-				icon: 'person.png' // Temp for development
+				icon: playerIcon // Temp for development
 			});
 			 
 			// Place Auto Markers
@@ -316,8 +317,6 @@ function calcRoute(){
 
 		  haversineDistance(response.routes[0].overview_path)
 
-
-
 		  var path = response.routes[0].overview_path;
 		  var legs = response.routes[0].legs;
 
@@ -331,7 +330,7 @@ function calcRoute(){
 				  playermarker = new google.maps.Marker({
 					  position: startLocation.latlng,
 					  map: map,
-					  icon: 'person.png' // Temp for development
+					  icon: playerIcon // Temp for development
 				   });
 
 				}
@@ -565,17 +564,6 @@ function haversineDistance(coordinates) {
 	}
 
 	console.log("distance: " + distance);
-
-	/*var R = 6371; // km
-	var dLat = (lat2-lat1).toRad();
-	var dLon = (lon2-lon1).toRad();
-	var lat1 = lat1.toRad();
-	var lat2 = lat2.toRad();
-
-	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-		Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-	var d = R * c;*/
 }
 
 /** Converts numeric degrees to radians */

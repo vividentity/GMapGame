@@ -8,6 +8,8 @@ and open the template in the editor.
     Author     : Ryan
 */
 
+@image-dir: '../images/';
+
 body {
 	margin:0;
 	padding:0;
@@ -15,12 +17,39 @@ body {
 
 #gmaps-border{
 	position:relative;
+	width: 1024px;
+	height: 768px;
+	margin: 0 auto;
 	
-	/* Google Maps Container */
-	#gmaps-container{ //Temp sizes at the moment, for development
-		width:100%; 
-		height:100%;
+	#ui{
+		#top-ui{
+			position: absolute;
+			top:0;
+			left:0;
+			right:0;
+			margin:0 auto;
+			width: 808px;
+			height: 92px;
+			background-image: url("@{image-dir}ui/top-nav-background.png");
+		}
+		#bottom-ui{
+			position: absolute;
+			bottom:0;
+			left:0;
+			right:0;
+			margin:0 auto;
+			width: 830px;
+			height: 166px;
+			background-image: url("@{image-dir}ui/bottom-nav-background.png");
+		}
+
+		/* Google Maps Container */
+		#gmaps-container{ //Temp sizes at the moment, for development
+			width:100%; 
+			height:100%;
+		}
 	}
+	
 	
 	/* Menu Boxes */
 	#dialog-box{
@@ -34,7 +63,7 @@ body {
 		height:100px; 
 		background: #fff;
 		border:1px solid;
-		margin: auto;
+		//margin: auto;
 	}
 	
 	#action-box{
