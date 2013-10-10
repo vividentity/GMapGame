@@ -54,6 +54,41 @@ body {
 			width: 830px;
 			height: 166px;
 			background-image: url("@{image-dir}ui/bottom-nav-background.png");
+			
+			#Menu{
+				position: relative;
+				padding: 15px 0 0 45px;
+				
+				ul{
+					list-style: none;
+					padding: 0;
+					margin: 0;
+					width: 98px;
+					
+					li{
+						list-style: none;
+						padding: 2px 0;
+						a{
+							display: block;
+							width: 98px;
+							height: 29px;
+							font-family: @gamefont;
+							font-size: 15px;
+							text-decoration: none;
+							text-align: center;
+							line-height: 29px;
+							background-image: url("@{image-dir}ui/buttons/menu-nav-sprite.png");
+							background-position: 0 0;
+							color: @white;
+							
+							&:hover{
+								background-position: 0 30px;
+								color: @highlight;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		/* Google Maps Container */
