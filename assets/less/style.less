@@ -8,7 +8,20 @@ and open the template in the editor.
     Author     : Ryan
 */
 
+//Import fonts
+@import url(http://fonts.googleapis.com/css?family=Love+Ya+Like+A+Sister);
+
 @image-dir: '../images/';
+
+//COLOURS
+@white: #fff;
+
+@dark-brown: #1A1214;
+@inner-brown: #2B1E21;
+@highlight: #BF992B;
+
+//Fonts
+@gamefont: 'Love Ya Like A Sister', cursive;
 
 body {
 	margin:0;
@@ -63,7 +76,6 @@ body {
 		height:100px; 
 		background: #fff;
 		border:1px solid;
-		//margin: auto;
 	}
 	
 	#action-box{
@@ -71,13 +83,75 @@ body {
 		position:absolute; 
 		top: 0; 
 		left: 0; 
-		bottom: 0; 
+/*		bottom: 0; */
 		right: 0; 
-		width:170px;
-		height:170px; 
-		background: #fff;
-		border:1px solid;
-		//margin: auto;
+		width:386px;
+		padding: 10px;
+/*		height:125px; */
+		background: @dark-brown;
+		
+		-webkit-border-radius: 8px;
+		-moz-border-radius: 8px;
+		border-radius: 8px;
+		
+		.action-content{
+			background: @inner-brown;
+			padding: 10px 10px 10px 75px;
+			background-image: url("@{image-dir}ui/icons/player-blood.png");
+			background-position: 0 0;
+			background-repeat: no-repeat;
+			
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			
+			h3{
+				font-family: @gamefont;
+				color: @highlight;
+				text-align: center;
+				padding: 5px 0;
+				margin: 0;
+			}
+			ul{
+				display: block;
+				list-style: none;
+				min-height: 40px;
+				padding: 0;
+				margin:0;
+				
+				li{
+					display: block;
+					float: left;
+					list-style: none;
+					
+					a{
+						display: block;
+						font-family: @gamefont;
+						font-size: 20px;
+						text-decoration: none;
+						text-align: center;
+						line-height: 40px;
+						
+						&.move{
+							width: 195px;
+							height: 40px;
+							background-image: url("@{image-dir}ui/buttons/left-action.png");
+							margin-right: 5px;
+							color: @highlight;
+						}
+						&.look{
+							
+						}
+						&.cancel{
+							width: 83px;
+							height: 41px;
+							background-image: url("@{image-dir}ui/buttons/right-action.png");
+							color: @white;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/* Hidden Information */
